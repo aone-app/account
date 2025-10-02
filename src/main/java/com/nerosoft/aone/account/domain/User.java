@@ -3,6 +3,7 @@ package com.nerosoft.aone.account.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.HashSet;
 
 /**
@@ -14,13 +15,15 @@ import java.util.HashSet;
 public final class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    public Long id;
 
     @Column(unique = true)
     public String username;
 
+    @Column(name = "password_hash")
     public String passwordHash;
 
+    @Column(name = "password_salt")
     public String passwordSalt;
 
     public String nickname;
@@ -30,6 +33,20 @@ public final class User {
     public String phone;
 
     public String biography;
+
+    public String avatar;
+
+    @Column(name = "access_failed_count")
+    public int accessFailedCount;
+
+    @Column(name = "lockout_end")
+    public Date lockoutEnd;
+
+    @Column(name = "is_deleted")
+    public boolean isDeleted;
+
+    @Column(name = "deleted_at")
+    public Date deletedAt;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

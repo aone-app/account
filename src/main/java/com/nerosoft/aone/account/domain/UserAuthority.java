@@ -14,10 +14,10 @@ import java.util.Date;
 public final class UserAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    public Long id;
 
     @Column(name = "user_id")
-    public long userId;
+    public Long userId;
 
     public String provider;
 
