@@ -20,8 +20,8 @@ public interface UserApplicationService {
     void create(UserCreateDto data);
 
     @Async
-    void update(UserUpdateDto data) throws org.springframework.security.core.AuthenticationException;
+    void update(UserUpdateDto data) throws AuthenticationException;
 
     @Async
-    void changePassword(String password);
+    void changePassword(String password) throws AuthenticationException;
 }

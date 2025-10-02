@@ -1,5 +1,7 @@
 package com.nerosoft.aone.account.service;
 
+import an.awesome.pipelinr.Pipeline;
+import com.nerosoft.aone.account.command.*;
 import com.nerosoft.aone.account.dto.UserCreateDto;
 import com.nerosoft.aone.account.dto.UserProfileDto;
 import com.nerosoft.aone.account.dto.UserUpdateDto;
@@ -8,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.CredentialException;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -16,36 +17,74 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
     private final UserRepository repository;
     private final AuthenticationFacade authentication;
+    private final Pipeline pipeline;
 
     @Autowired
-    public UserApplicationServiceImpl(UserRepository repository,AuthenticationFacade authentication) {
+    public UserApplicationServiceImpl(UserRepository repository, AuthenticationFacade authentication, Pipeline pipeline) {
         this.repository = repository;
         this.authentication = authentication;
+        this.pipeline = pipeline;
     }
 
     @Override
     public CompletableFuture<UserProfileDto> getProfile() throws AuthenticationException {
-        if(!authentication.getAuthentication().isAuthenticated()){
-            throw new AuthenticationException("Authentication failed"){};
+        if (!authentication.getAuthentication().isAuthenticated()) {
+            throw new AuthenticationException("Authentication failed") {
+            };
         }
 
-        return CompletableFuture.completedFuture(null);
+        var id = authentication.getUserId();
+
+        if (id <= 0) {
+            throw new AuthenticationException("Authentication failed") {};
+        }
+
+        var optional = repository.findById(id);
+        if (optional.isEmpty()) {
+            throw new AuthenticationException("Authentication failed") {
+            };
+        }
+
+        var user = optional.get();
+        var dto = new UserProfileDto() {
+            {
+                setId(user.getId());
+                setUsername(user.getUsername());
+                setAvatar(user.getAvatar());
+                setBiography(user.getBiography());
+                setEmail(user.getEmail());
+                setPhone(user.getPhone());
+            }
+        };
+
+        return CompletableFuture.completedFuture(dto);
     }
 
     @Override
     public void create(UserCreateDto data) {
-
+        var command = new UserCreateCommand(data);
+        pipeline.send(command);
     }
 
     @Override
     public void update(UserUpdateDto data) throws AuthenticationException {
-        if(!authentication.getAuthentication().isAuthenticated()){
-            throw new AuthenticationException("Authentication failed"){};
+        var id = authentication.getUserId();
+
+        if (id<=0) {
+            throw new AuthenticationException("Authentication failed") {
+            };
         }
+
+        var command = new UserUpdateCommand(id);
+        pipeline.send(command);
     }
 
     @Override
-    public void changePassword(String password) {
+    public void changePassword(String password) throws AuthenticationException {
+        if(!authentication.getAuthentication().isAuthenticated()){
+            throw new AuthenticationException("Authentication failed"){};
+        }
+
 
     }
 }
