@@ -17,11 +17,11 @@ public interface UserApplicationService {
      * @param data the user creation data
      */
     @Async
-    void create(UserCreateDto data);
+    CompletableFuture<Long> create(UserCreateDto data);
 
     @Async
-    void update(UserUpdateDto data) throws org.springframework.security.core.AuthenticationException;
+    void update(UserUpdateDto data) throws AuthenticationException;
 
     @Async
-    void changePassword(String password);
+    void changePassword(String password) throws AuthenticationException;
 }

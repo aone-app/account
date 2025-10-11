@@ -52,25 +52,13 @@ public final class User {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     public HashSet<UserAuthority> authorities = new HashSet<>();
 
-    public static User Create(String username) {
+    public static User create(String username) {
         User user = new User();
         user.username = username;
         return user;
     }
 
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void updateEmail(String email) {
-        this.email = email;
-    }
-
-    public void updatePhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void updatePassword(String password) {
+    public void setPassword(String password) {
 
     }
 
