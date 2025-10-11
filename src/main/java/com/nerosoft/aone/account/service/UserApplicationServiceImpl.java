@@ -6,7 +6,10 @@ import com.nerosoft.aone.account.dto.UserCreateDto;
 import com.nerosoft.aone.account.dto.UserProfileDto;
 import com.nerosoft.aone.account.dto.UserUpdateDto;
 import com.nerosoft.aone.account.repository.UserRepository;
+import com.nerosoft.aone.account.seedwork.CommandResult;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
@@ -28,21 +31,15 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
     @Override
     public CompletableFuture<UserProfileDto> getProfile() throws AuthenticationException {
-        if (!authentication.getAuthentication().isAuthenticated()) {
-            throw new AuthenticationException("Authentication failed") {
-            };
-        }
-
         var id = authentication.getUserId();
 
         if (id <= 0) {
-            throw new AuthenticationException("Authentication failed") {};
+            throw new BadCredentialsException("Authentication failed") {};
         }
 
         var optional = repository.findById(id);
         if (optional.isEmpty()) {
-            throw new AuthenticationException("Authentication failed") {
-            };
+            throw new EntityNotFoundException("User not found");
         }
 
         var user = optional.get();
@@ -61,9 +58,10 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     }
 
     @Override
-    public void create(UserCreateDto data) {
+    public CompletableFuture<Long> create(UserCreateDto data) {
         var command = new UserCreateCommand(data);
-        pipeline.send(command);
+        var result = pipeline.send(command);
+        return result.thenApply(CommandResult::getResult);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.nerosoft.aone.account.configuration;
+package com.nerosoft.aone.account.seedwork;
 
 import an.awesome.pipelinr.*;
 import org.springframework.beans.factory.ObjectProvider;

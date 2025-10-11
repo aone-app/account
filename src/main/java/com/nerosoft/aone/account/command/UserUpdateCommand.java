@@ -6,6 +6,9 @@ import lombok.Getter;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Command to update user information
+ */
 @Data
 public class UserUpdateCommand implements Command<CompletableFuture<Boolean>> {
     @Getter

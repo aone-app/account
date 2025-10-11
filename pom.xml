@@ -76,6 +76,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.82</version>
+        </dependency>
+        <dependency>
             <groupId>net.sizovs</groupId>
             <artifactId>pipelinr</artifactId>
             <version>0.11</version>
@@ -85,6 +90,13 @@
             <artifactId>spring-boot-starter-security-oauth2-client</artifactId>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>maven</id>
+            <name>Maven Official</name>
+            <url>https://mvnrepository.com/</url>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
